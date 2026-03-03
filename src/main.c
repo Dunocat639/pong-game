@@ -41,11 +41,11 @@ void controls(int key, Jugador *p, float velocitat) {
 void puntuar(Bola *b, Jugador *p) {
         b->velocitat.x *= -1.0f;
         p->punts ++;
-        b->posició = (Vector2){ampladaPantalla/2, alturaPantalla/2};
-        b->velocitat = b->defVel; // Reiniciar velocitat
+        b->posició = (Vector2){ampladaPantalla/2, alturaPantalla/2}; // Reiniciar posició de la vola
+        b->velocitat = b->defVel; // Reiniciar velocitat de la bola
 }
 
-// Limitar velocitat
+// Limitar velocitat de la bola
 void limitarVelBola(Bola *b) {
     if (fabs(b->velocitat.x) < b->maxVel.x) {
     b->velocitat.x *= -1.1f;
@@ -86,7 +86,7 @@ int main(void) {
         .radi = 10.0f,
         .defVel = {300, 200},
         .velocitat = bola.defVel,
-        .maxVel = {900, bola.velocitat.y} // La velocitat Y no importa
+        .maxVel = {950, bola.velocitat.y} // La velocitat Y no importa
     };
 
     while(!WindowShouldClose()){
@@ -114,6 +114,17 @@ int main(void) {
             bola.velocitat.y *= -1.0f;
         }
 
+
+        // Col·lisió bola amb jugadors
+        if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j1.posició.x, j1.posició.y, j1.mida.x, j1.mida.y})){ // Jugador 1
+            limitarVelBola(&bola);
+            bola.posició.x = j1.posició.x + j1.mida.x + bola.radi; // Seguretat
+        }
+        else if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j2.posició.x, j2.posició.y, j2.mida.x, j2.mida.y})){ // Jugador 2
+            limitarVelBola(&bola);
+            bola.posició.x = j2.posició.x - bola.radi; // Seguretat
+        }
+
         BeginDrawing();
 
                 ClearBackground(BLACK);
@@ -125,16 +136,7 @@ int main(void) {
                 DrawRectangleV(j1.posició, j1.mida, WHITE);
                 DrawRectangleV(j2.posició, j2.mida, WHITE);
 
-                // Col·lisió bola amb jugadors
-                if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j1.posició.x, j1.posició.y, j1.mida.x, j1.mida.y})){ // Jugador 1
-                    limitarVelBola(&bola);
-                    bola.posició.x = j1.posició.x + j1.mida.x + bola.radi; // Seguretat
-                }
-                else if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j2.posició.x, j2.posició.y, j2.mida.x, j2.mida.y})){ // Jugador 2
-                    limitarVelBola(&bola);
-                    bola.posició.x = j2.posició.x - bola.radi;
-                }
-
+                // Dibuixar puntuació
                 DrawText(TextFormat("Puntuació J1: %d", j1.punts), ampladaPantalla / 20, alturaPantalla / 20, 24, WHITE);
                 DrawText(TextFormat("Puntuació J2: %d", j2.punts), ampladaPantalla - (ampladaPantalla / 4), alturaPantalla / 20, 24, WHITE);
                 
