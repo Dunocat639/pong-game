@@ -2,67 +2,11 @@
 #include <math.h>
 #include <raylib.h>
 
-const int ampladaPantalla = 1000;
-const int alturaPantalla = 500;
-
-// Struct jugadors (inicialitazció)
-typedef struct {
-    Vector2 posició;
-    Vector2 mida;
-    const float velocitat;
-    int punts;
-} Jugador;
-
-// Struct bola (inicialitazció)
-typedef struct {
-    Vector2 posició;
-    const float radi;
-    const Vector2 defVel;
-    Vector2 velocitat;
-    Vector2 maxVel;
-} Bola;
-
-// Funció per als controls
-void controls(int key, Jugador *p, float velocitat) {
-    if(IsKeyDown(key)) {
-        p->posició.y += velocitat * GetFrameTime();
-    }
-
-    if (p->posició.y < 0) {
-        p->posició.y = 0;
-    }
-
-    if (p->posició.y > (alturaPantalla - p->mida.y)) {
-        p->posició.y = alturaPantalla - p->mida.y;
-    }
-}
-
-// Funció per a puntuar
-void puntuar(Bola *b, Jugador *p) {
-        b->velocitat.x *= -1.0f;
-        p->punts ++;
-        b->posició = (Vector2){ampladaPantalla/2, alturaPantalla/2}; // Reiniciar posició de la vola
-        b->velocitat = b->defVel; // Reiniciar velocitat de la bola
-}
-
-// Limitar velocitat de la bola
-void limitarVelBola(Bola *b) {
-    if (fabs(b->velocitat.x) < b->maxVel.x) {
-    b->velocitat.x *= -1.1f;
-    }
-    else {
-    b->velocitat.x *= -1.0f;
-    }
-}
-
+#include "main.h"
+#include "jugadors.h"
+#include "bola.h"
 
 int main(void) {
-    
-    const char títol[] = "Joc del pong";
-
-    InitWindow(ampladaPantalla, alturaPantalla, títol);
-
-    SetTargetFPS(240);
 
     // Struct jugador 1
     Jugador j1 = {
@@ -85,9 +29,15 @@ int main(void) {
         .posició = {ampladaPantalla/2, alturaPantalla/2},
         .radi = 10.0f,
         .defVel = {300, 200},
-        .velocitat = bola.defVel,
+        .velocitat = {300, 200},
         .maxVel = {950, bola.velocitat.y} // La velocitat Y no importa
     };
+    
+    const char títol[] = "Joc del pong";
+
+    InitWindow(ampladaPantalla, alturaPantalla, títol);
+
+    SetTargetFPS(240);
 
     while(!WindowShouldClose()){
 
