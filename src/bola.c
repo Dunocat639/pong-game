@@ -1,7 +1,6 @@
 #include "bola.h"
 #include "main.h"
 
-
 // Limitar velocitat de la bola
 void limitarVelBola(Bola *b) {
     if (fabs(b->velocitat.x) < b->maxVel.x) {

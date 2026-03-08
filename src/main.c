@@ -6,6 +6,9 @@
 #include "jugadors.h"
 #include "bola.h"
 
+const int ampladaPantalla = 1000;
+const int alturaPantalla = 500;
+
 int main(void) {
 
     // Struct jugador 1
@@ -38,7 +41,16 @@ int main(void) {
 
     SetTargetFPS(240);
 
+    InitAudioDevice();
+
+    Sound hitSound = LoadSound("resources/sounds/hit.mp3");
+    Music musica = LoadMusicStream("resources/sounds/musica.mp3");
+
+    PlayMusicStream(musica);
+
     while(!WindowShouldClose()){
+
+        UpdateMusicStream(musica);
 
         // Controls jugadors
         controls(KEY_W, &j1, -j1.velocitat);
@@ -68,10 +80,12 @@ int main(void) {
         if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j1.posició.x, j1.posició.y, j1.mida.x, j1.mida.y})){ // Jugador 1
             limitarVelBola(&bola);
             bola.posició.x = j1.posició.x + j1.mida.x + bola.radi; // Seguretat
+            PlaySound(hitSound);
         }
         else if (CheckCollisionCircleRec(bola.posició, bola.radi, (Rectangle){j2.posició.x, j2.posició.y, j2.mida.x, j2.mida.y})){ // Jugador 2
             limitarVelBola(&bola);
             bola.posició.x = j2.posició.x - bola.radi; // Seguretat
+            PlaySound(hitSound);
         }
 
         BeginDrawing();
@@ -93,6 +107,9 @@ int main(void) {
         EndDrawing();
     }
 
+    UnloadMusicStream(musica);
+    UnloadSound(hitSound);
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
