@@ -33,9 +33,8 @@ int main(void) {
         .maxVel = {950, bola.velocitat.y} // La velocitat Y no importa
     };
     
-    const char títol[] = "Joc del pong";
 
-    InitWindow(ampladaPantalla, alturaPantalla, títol);
+    InitWindow(ampladaPantalla, alturaPantalla, "Joc del pong");
 
     SetTargetFPS(240);
 
