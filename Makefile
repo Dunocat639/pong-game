@@ -6,29 +6,32 @@ LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 # Nom de l'executable
 TARGET = pong
 
-# Troba automàticament tots els .c dins src/
+# Troba automaticament tots els .c dins src/
 SRC = $(wildcard src/*.c)
 
 # Genera els .o corresponents (src/foo.c -> build/foo.o)
 OBJ = $(patsubst src/%.c, build/%.o, $(SRC))
+
+# Perdefinir directoris d'output amb més claritat
+BUILD_DIR = build
+SRC_DIR = src
 
 # Regla principal
 all: $(TARGET)
 
 # Enllaça tots els .o per crear l'executable
 $(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
 # Compila cada .c a .o (inclou headers de src/)
-build/%.o: src/%.c
-	mkdir -p build
-	$(CC) $(CFLAGS) -I src -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) -I $(SRC_DIR) -c $< -o $@
 
-# Neteja
+# Neteu tots els fitxers temporals i directoris
 clean:
-	rm -f $(TARGET)
-	rm -rf build/
+	rm -rf $(TARGET) $(BUILD_DIR)
 
-# Compila i executa
+# Compila i executa directament
 run: all
 	./$(TARGET)
